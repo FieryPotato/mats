@@ -3,21 +3,15 @@ import os
 import unittest
 from unittest import mock
 
-from src.io import IOManager
+from src.Reader import Reader
 
-
-class Reader:
-    def __init__(self):
-        self.mats = IOManager().load()
-
-    def full_path_find(self, item, *further_items):
-        if not further_items:
-            return self.mats[item]
-        keys = [k for k in further_items[::-1]]
-        current = self.mats[item]
-        while keys:
-            current = current[keys.pop()]
-        return current
+TEST_DATA = {
+    'key': 'value',
+    'dict 2': {
+        'a': 'a',
+        'b': 'b'
+    }
+}
 
 
 class TestReader(unittest.TestCase):
@@ -25,14 +19,7 @@ class TestReader(unittest.TestCase):
 
     def setUp(self) -> None:
         with open(self.path, 'w') as f:
-            data = {
-                'key': 'value',
-                'dict 2': {
-                    'a': 'a',
-                    'b': 'b'
-                }
-            }
-            json.dump(data, f)
+            json.dump(TEST_DATA, f)
 
     def tearDown(self) -> None:
         os.remove(self.path)
