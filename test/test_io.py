@@ -10,7 +10,7 @@ class TestLoad(unittest.TestCase):
 
     def test_loader_target_file(self):
         path = 'data/MATS.json'
-        self.assertEqual(path, IOManager().mats_path)
+        self.assertEqual(path, IOManager().path)
 
     def test_loader_opens_json(self):
         data = {'key', 'value'}
@@ -22,7 +22,7 @@ class TestSave(unittest.TestCase):
     def test_save_mats(self):
         data = {'key': 'value'}
         with file_write_cm() as cm:
-            with patch('src.io._IOManager.mats_path', new_callable=PropertyMock) as mock:
+            with patch('src.io._IOManager.path', new_callable=PropertyMock) as mock:
                 mock.return_value = cm.path
                 IOManager().save(data)
                 with open(cm.path) as file:

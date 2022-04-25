@@ -2,14 +2,14 @@ import json
 
 
 class _IOManager:
-    mats_path: str = 'data/MATS.json'
+    path: str = 'data/MATS.json'
 
     def load(self) -> dict:
-        with open(self.mats_path) as file:
+        with open(self.path) as file:
             return json.load(file)
 
     def save(self, data: dict) -> None:
-        with open(self.mats_path, 'w') as file:
+        with open(self.path, 'w') as file:
             json.dump(data, file)
 
     def multi_input(self, prompt='') -> str:
