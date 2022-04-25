@@ -1,15 +1,23 @@
 import json
 import os
 import unittest
-from unittest import mock
 
-from src.Reader import Reader
+from src.io import _IOManager
+from src.Reader import Reader, pathify
 
 TEST_DATA = {
     'key': 'value',
     'dict 2': {
         'a': 'a',
         'b': 'b'
+    },
+    'second key': {
+        'hidden value': 'value',
+        'unknown path': 'path'
+    },
+    'glossary': {
+        'pikachu': 'It keeps its tail raised to monitor its surroundings. '
+                   'If you yank its tail, it will try to bite you.'
     }
 }
 
@@ -20,23 +28,41 @@ class TestReader(unittest.TestCase):
     def setUp(self) -> None:
         with open(self.path, 'w') as f:
             json.dump(TEST_DATA, f)
+        self.old_path = _IOManager.path
+        _IOManager.path = self.path
 
     def tearDown(self) -> None:
         os.remove(self.path)
+        _IOManager.path = self.old_path
 
     def test_reader_returns_full_path_1(self):
-        with mock.patch('src.io._IOManager.path', new_callable=mock.PropertyMock) as p:
-            p.return_value = self.path
-            actual = Reader().full_path_find('key')
-            expected = 'value'
-            self.assertEqual(expected, actual)
+        actual = Reader().full_path_find('key')
+        expected = 'value'
+        self.assertEqual(expected, actual)
 
     def test_reader_returns_full_path_2(self):
-        with mock.patch('src.io._IOManager.path', new_callable=mock.PropertyMock) as p:
-            p.return_value = self.path
-            actual = Reader().full_path_find('dict 2', 'a')
-            expected = 'a'
-            self.assertEqual(expected, actual)
+        actual = Reader().full_path_find('dict 2', 'a')
+        expected = 'a'
+        self.assertEqual(expected, actual)
+
+    def test_reader_checks_recursively_on_key_error(self):
+        actual = Reader().full_path_find('pikachu')
+        expected = [('glossary',
+                     'pikachu',
+                     'It keeps its tail raised to monitor its surroundings. '
+                     'If you yank its tail, it will try to bite you.')]
+        self.assertEqual(expected, actual)
+
+    def test_reader_gets_all_results_with_key_error(self):
+        actual = Reader().full_path_find('value')
+        expected = [('key', 'value'), ('second key', 'hidden value', 'value')]
+        self.assertEqual(expected, actual)
+
+    def test_reader_formats_paths(self):
+        full_paths = Reader().full_path_find('path')
+        actual = [pathify(path) for path in full_paths]
+        expected = ["MATS > second key > unknown path > path"]
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':
