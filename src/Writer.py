@@ -11,3 +11,8 @@ class Writer:
             if character in keys:
                 return [word.strip(strippers)
                         for word in keys.split(character)]
+
+    def get_value(self):
+        prompt = "Enter value. Line breaks will be ignored."
+        value = IOManager().multi_input(prompt)
+        return value.replace('\n', ' ')

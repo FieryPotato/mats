@@ -1,3 +1,4 @@
+import json
 import os
 import unittest
 from unittest import mock
@@ -6,11 +7,19 @@ from src.Writer import Writer
 from src.io import _IOManager
 
 
+TEST_DATA = {
+    'glossary': {
+        'doe': 'A deer, a female deer.'
+    }
+}
+
+
 class TestWriter(unittest.TestCase):
     path = 'test/MATS.json'
 
     def setUp(self) -> None:
-        open(self.path, 'x').close()
+        with open(self.path, 'w') as f:
+            json.dump(TEST_DATA, f)
         self.old_path = _IOManager.path
         _IOManager.path = self.path
 
@@ -31,6 +40,20 @@ class TestWriter(unittest.TestCase):
         with mock.patch('builtins.input', side_effect=inputs):
             keys = Writer().get_keys()
         self.assertEqual(expected, keys)
+
+    def test_ask_for_value_single_line(self):
+        expected = 'Letters'
+        inputs = ['Letters', '']
+        with mock.patch('builtins.input', side_effect=inputs):
+            value = Writer().get_value()
+        self.assertEqual(expected, value)
+
+    def test_ask_for_value_multi_line(self):
+        expected = 'line 1 line 2'
+        inputs = ['line 1', 'line 2', '']
+        with mock.patch('builtins.input', side_effect=inputs):
+            value = Writer().get_value()
+        self.assertEqual(expected, value)
 
 
 if __name__ == '__main__':
