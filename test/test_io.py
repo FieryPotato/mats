@@ -30,7 +30,7 @@ class TestSave(unittest.TestCase):
 
 
 class TestInput(unittest.TestCase):
-    def test_get_input(self):
+    def test_get_multi_input(self):
         input_list = ["one", "two", "three", ""]
         expected = "\n".join(input_list[:-1])
         with patch("builtins.input", side_effect=input_list):

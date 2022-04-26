@@ -14,8 +14,8 @@ class _IOManager:
 
     def multi_input(self, prompt='') -> str:
         input_list = [None]
+        print(prompt)
         while input_list[-1] != '':
-            print(prompt)
             input_list.append(input())
         return "\n".join(input_list[1:-1])
 

@@ -1,7 +1,7 @@
 from src.io import IOManager
 
 
-class Reader:
+class _Reader:
     def __init__(self):
         self.mats = IOManager().load()
 
@@ -35,3 +35,13 @@ def pathify(path):
     full_path = ['MATS']
     full_path.extend(path)
     return ' > '.join(full_path)
+
+
+sentinel = None
+
+
+def Reader() -> _Reader:
+    global sentinel
+    if sentinel is None:
+        sentinel = _Reader()
+    return sentinel
