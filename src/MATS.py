@@ -1,8 +1,20 @@
+from collections.abc import MutableMapping
+from typing import Iterator
+
 from src.Writer import Writer
 from src.io import IOManager
 
 
-class Mats:
+class _MATS(MutableMapping):
+    def __iter__(self) -> Iterator['_T_co']:
+        yield from self.data.__iter__()
+
+    def __len__(self) -> int:
+        return self.data.__len__()
+
+    def __delitem__(self, v: '_KT') -> None:
+        del self.data[v]
+
     def __init__(self):
         self.data = IOManager().load()
 
@@ -11,9 +23,6 @@ class Mats:
 
     def __setitem__(self, key, value):
         self.data[key] = value
-
-    def __delattr__(self, item):
-        del self.data[item]
 
     def add_item(self):
         keys = Writer().get_keys()
@@ -24,5 +33,15 @@ class Mats:
             total = {k: total}
         self.data.update(total)
 
+    def save(self):
+        IOManager().save(self.data)
 
-MATS = Mats()
+
+sentinel = None
+
+
+def MATS():
+    global sentinel
+    if sentinel is None:
+        sentinel = _MATS()
+    return sentinel

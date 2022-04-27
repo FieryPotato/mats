@@ -10,8 +10,8 @@ class TestMats(unittest.TestCase):
         v = 'A drop of golden sun.'
         inputs = [*k, '', v, '']
         with mock.patch('builtins.input', side_effect=inputs):
-            MATS.add_item()
-        self.assertEqual(MATS[k[0]][k[1]], v)
+            MATS().add_item()
+        self.assertEqual(MATS()[k[0]][k[1]], v)
 
 
 if __name__ == '__main__':

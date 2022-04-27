@@ -3,6 +3,7 @@ import os
 import unittest
 from unittest import mock
 
+from src.MATS import MATS
 from src.Writer import Writer
 from src.io import _IOManager
 
@@ -54,6 +55,15 @@ class TestWriter(unittest.TestCase):
         with mock.patch('builtins.input', side_effect=inputs):
             value = Writer().get_value()
         self.assertEqual(expected, value)
+
+    def test_save_mats(self):
+        k = 'mi'
+        v = 'A name I call myself.'
+        MATS()['glossary'] = {k: v}
+        MATS().save()
+        with open(self.path) as f:
+            data = json.load(f)
+        self.assertEqual(data['glossary'][k], v)
 
 
 if __name__ == '__main__':

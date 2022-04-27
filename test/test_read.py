@@ -2,7 +2,7 @@ import json
 import os
 import unittest
 
-from src.io import _IOManager
+from src.MATS import MATS
 from src.Reader import Reader, pathify
 
 TEST_DATA = {
@@ -23,17 +23,8 @@ TEST_DATA = {
 
 
 class TestReader(unittest.TestCase):
-    path = 'test/MATS.json'
-
     def setUp(self) -> None:
-        with open(self.path, 'w') as f:
-            json.dump(TEST_DATA, f)
-        self.old_path = _IOManager.path
-        _IOManager.path = self.path
-
-    def tearDown(self) -> None:
-        os.remove(self.path)
-        _IOManager.path = self.old_path
+        MATS().update(TEST_DATA)
 
     def test_reader_returns_full_path_1(self):
         actual = Reader().full_path_find('key')
@@ -63,6 +54,15 @@ class TestReader(unittest.TestCase):
         actual = [pathify(path) for path in full_paths]
         expected = ["MATS > second key > unknown path > path"]
         self.assertEqual(expected, actual)
+
+    def test_reader_queries_mats(self):
+        k = ['glossary', 'fa']
+        v = 'A long, long way to run'
+        MATS()[k[0]][k[1]] = v
+        expected = v
+        actual = Reader().full_path_find(*k)
+        self.assertEqual(expected, actual)
+
 
 
 if __name__ == '__main__':

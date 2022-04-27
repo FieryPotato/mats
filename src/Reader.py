@@ -1,9 +1,9 @@
-from src.io import IOManager
+from src.MATS import MATS
 
 
 class _Reader:
     def __init__(self):
-        self.mats = IOManager().load()
+        self.mats = MATS()
 
     def full_path_find(self, item, *further_items):
         try:
